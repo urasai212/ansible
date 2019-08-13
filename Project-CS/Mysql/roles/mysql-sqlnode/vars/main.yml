@@ -1,0 +1,4 @@
+management_host: 172.31.30.200
+root_path: /home/ec2-user
+sshdir: /home/ec2-user/.ssh
+

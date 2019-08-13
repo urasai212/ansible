@@ -1,0 +1,40 @@
+  - name: Creates directory
+    file:
+      path: "{{ sshdir }}"
+
+      state: directory
+
+  - name: Ansible create file with content example
+
+    copy:
+
+       dest: "{{ sshdir }}/test.pem"
+
+       content: |
+         {{ lookup('file', 'test.pem') }}
+       mode: 400
+
+  - name: added ssh-agent
+    shell:  echo "Identityfile {{ sshdir }}/test.pem" | sudo tee -a /etc/ssh/ssh_config
+
+  - name: download epel-release
+    get_url:
+      url=https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm dest=/usr/local/src/mysql80-community-release-el7-3.noarch.rpm
+
+  - name: install cluster server
+    command: rpm -ivh mysql80-community-release-el7-3.noarch.rpm
+    args:
+      chdir: /usr/local/src
+  - name: install mysql
+    yum:
+      name : mysql-server
+      state: present
+
+  - name: enable mysql
+    service:
+       name: mysqld
+       state: started
+       enabled: yes
+
+  - name: secure installation
+    command: sudo mysql_secure_installation

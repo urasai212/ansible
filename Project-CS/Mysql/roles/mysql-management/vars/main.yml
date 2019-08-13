@@ -1,0 +1,15 @@
+root_path: /home/ec2-user
+
+sshdir: /home/ec2-user/.ssh
+
+management_host : 172.31.30.200
+
+data_host: 172.31.21.243
+
+sql_host: 172.31.23.113
+
+
+
+
+
+

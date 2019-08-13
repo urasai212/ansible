@@ -1,0 +1,71 @@
+
+  - name: Creates directory
+    file:
+       path: "{{ sshdir }}"
+
+       state: directory
+
+  - name: Ansible create file with content example
+
+    copy:
+
+       dest: "{{ sshdir }}/nodekey.pem"
+
+       content: |
+
+         {{ lookup('file', 'nodekey.pem') }}
+
+       mode: 400
+
+  - name: added ssh-agent
+    shell:  echo "Identityfile {{ sshdir }}/nodekey.pem" | sudo tee -a /etc/ssh/ssh_config
+
+
+
+  - name: Download Mysql cluster node
+    get_url: url=https://dev.mysql.com/get/Downloads/MySQL-Cluster-7.4/MySQL-Cluster-gpl-7.4.25-1.el7.x86_64.rpm-bundle.tar dest={{ root_path }}/MySQL-Cluster-gpl-7.4.25-1.el7.x86_64.rpm-bundle.tar
+  
+  - name: Unarchive tar file
+    unarchive:
+      src: "{{ root_path }}/MySQL-Cluster-gpl-7.4.25-1.el7.x86_64.rpm-bundle.tar"
+      dest: "{{ root_path }}"
+
+
+  - name: install perl data dumper
+    yum:
+      name : perl-Data-Dumper
+      state: present
+  - name: remove mariadb
+    yum:
+      name: mariadb-libs
+      state: absent
+  - name: install cluster server
+    yum:
+      name :  MySQL-Cluster-server-gpl-7.4.25-1.el7.x86_64.rpm
+      state: present
+  
+  - name: cluster client
+    yum:
+      name:  MySQL-Cluster-client-gpl-7.4.25-1.el7.x86_64.rpm
+      state: present
+  
+  - name: cluster shared
+    yum:
+      name:  MySQL-Cluster-shared-gpl-7.4.25-1.el7.x86_64.rpm
+      state: present
+  
+  - name: Install config
+    template:
+        src=my.cnf
+        dest=/etc/my.cnf
+        mode=400
+  - name: creates mysql-cluster
+    file:
+      path: /var/lib/mysql-cluster
+      state: directory
+  - name: start the management node
+    command: sudo ndbd
+
+
+
+
